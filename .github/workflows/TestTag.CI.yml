@@ -44,15 +44,11 @@ jobs:
           files: TestResults/**/*.trx
           check_name: "Tests"
 
-      - name: 📈 Generate coverage summary
+      - name: 📈 Generate coverage report
         if: ${{ always() }}
         uses: ./.github/actions/SimpleCodeCoverage
         with:
           coverage-file-pattern: 'TestResults/**/coverage.cobertura.xml'
-          cov-green-threshold: '50'
-          cov-yellow-threshold: '20'
-          complexity-green-threshold: '10'
-          complexity-yellow-threshold: '20'
 
       - name: 💾 Upload coverage report
         if: ${{ always() }}
