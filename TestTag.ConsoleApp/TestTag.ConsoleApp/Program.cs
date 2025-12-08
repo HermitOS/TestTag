@@ -1,4 +1,4 @@
-﻿using TagTest.ConsoleApp;
+﻿using TestTag.ConsoleApp;
 
 var calculator = new Calculator();
 var result = calculator.Add(5, 3);

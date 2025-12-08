@@ -1,4 +1,4 @@
-namespace TagTest.ConsoleApp;
+namespace TestTag.ConsoleApp;
 
 public class Calculator
 {

@@ -1,6 +1,6 @@
-﻿using TagTest.ConsoleApp;
+﻿using TestTag.ConsoleApp;
 
-namespace TagTest.Tests;
+namespace TestTag.Tests;
 
 public class CalculatorTests
 {

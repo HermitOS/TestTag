@@ -5,8 +5,8 @@ on:
   workflow_dispatch:
 
 env:
-  SOLUTION_PATH: ./TagTest.sln
-  PROJECT_PATH: ./TagTest.ConsoleApp/TagTest.ConsoleApp/TagTest.ConsoleApp.csproj
+  SOLUTION_PATH: ./TestTag.sln
+  PROJECT_PATH: ./TestTag.ConsoleApp/TestTag.ConsoleApp/TestTag.ConsoleApp.csproj
   DOTNET_VERSION: '9.0.x'
   CONFIGURATION: Release
 

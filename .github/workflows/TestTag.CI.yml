@@ -1,4 +1,4 @@
-name: TagTest CI
+name: TestTag CI
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  SOLUTION_PATH: ./TagTest.sln
+  SOLUTION_PATH: ./TestTag.sln
   DOTNET_VERSION: '9.0.x'
   CONFIGURATION: Debug
 
