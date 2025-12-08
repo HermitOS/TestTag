@@ -46,35 +46,37 @@ jobs:
 
       - name: 📈 Generate coverage summary
         if: ${{ always() }}
+        shell: bash
         run: |
-          $coverageFile = Get-ChildItem -Path TestResults -Filter coverage.cobertura.xml -Recurse | Select-Object -First 1
-          if ($coverageFile) {
-            [xml]$coverage = Get-Content $coverageFile.FullName
-            $lineRate = [math]::Round([decimal]$coverage.coverage.'line-rate' * 100, 2)
-            $branchRate = [math]::Round([decimal]$coverage.coverage.'branch-rate' * 100, 2)
+          coverageFile=$(find TestResults -name 'coverage.cobertura.xml' -type f | head -n 1)
+          if [ -f "$coverageFile" ]; then
+            lineRate=$(grep -oP 'line-rate="\K[^"]+' "$coverageFile" | head -n 1)
+            branchRate=$(grep -oP 'branch-rate="\K[^"]+' "$coverageFile" | head -n 1)
+            linePercent=$(awk "BEGIN {printf \"%.2f\", $lineRate * 100}")
+            branchPercent=$(awk "BEGIN {printf \"%.2f\", $branchRate * 100}")
             
-            "## Test Coverage Summary" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
-            "" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
-            "| Metric | Coverage |" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
-            "|--------|----------|" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
-            "| **Line Coverage** | **${lineRate}%** |" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
-            "| **Branch Coverage** | **${branchRate}%** |" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
-            "" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
+            echo "## Test Coverage Summary" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "| Metric | Coverage |" >> $GITHUB_STEP_SUMMARY
+            echo "|--------|----------|" >> $GITHUB_STEP_SUMMARY
+            echo "| **Line Coverage** | **${linePercent}%** |" >> $GITHUB_STEP_SUMMARY
+            echo "| **Branch Coverage** | **${branchPercent}%** |" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
             
-            "### Coverage by Class" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
-            "" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
-            "| Class | Line Coverage | Branch Coverage |" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
-            "|-------|---------------|-----------------|" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
+            echo "### Coverage by Class" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "| Class | Line Coverage | Branch Coverage |" >> $GITHUB_STEP_SUMMARY
+            echo "|-------|---------------|-----------------|" >> $GITHUB_STEP_SUMMARY
             
-            foreach ($package in $coverage.coverage.packages.package) {
-              foreach ($class in $package.classes.class) {
-                $className = $class.name
-                $classLineRate = [math]::Round([decimal]$class.'line-rate' * 100, 2)
-                $classBranchRate = [math]::Round([decimal]$class.'branch-rate' * 100, 2)
-                "| $className | ${classLineRate}% | ${classBranchRate}% |" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
-              }
-            }
-          }
+            grep '<class' "$coverageFile" | while IFS= read -r line; do
+              className=$(echo "$line" | grep -oP 'name="\K[^"]+')
+              classLine=$(echo "$line" | grep -oP 'line-rate="\K[^"]+')
+              classBranch=$(echo "$line" | grep -oP 'branch-rate="\K[^"]+')
+              classLinePercent=$(awk "BEGIN {printf \"%.2f\", $classLine * 100}")
+              classBranchPercent=$(awk "BEGIN {printf \"%.2f\", $classBranch * 100}")
+              echo "| $className | ${classLinePercent}% | ${classBranchPercent}% |" >> $GITHUB_STEP_SUMMARY
+            done
+          fi
 
       - name: 💾 Upload coverage report
         if: ${{ always() }}
