@@ -1,0 +1,67 @@
+name: TagTest CI
+
+on:
+  push:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+  workflow_dispatch:
+
+env:
+  SOLUTION_PATH: ./TagTest.sln
+  DOTNET_VERSION: '9.0.x'
+  CONFIGURATION: Debug
+
+jobs:
+  CIBuild:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⤵️ Checkout
+        uses: actions/checkout@v4
+
+      - name: 🛠️ Setup .NET (with NuGet cache)
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          cache: true
+          cache-dependency-path: |
+            **/Directory.Packages.props
+            **/*.csproj
+
+      - name: 📦 Restore
+        run: dotnet restore ${{ env.SOLUTION_PATH }}
+
+      - name: 🔨 Build
+        run: dotnet build ${{ env.SOLUTION_PATH }} -c ${{ env.CONFIGURATION }} --no-restore
+
+      - name: 🧪 Test
+        run: dotnet test ${{ env.SOLUTION_PATH }} -c ${{ env.CONFIGURATION }} --no-build --logger "trx;LogFileName=test.trx" --results-directory TestResults --settings Coverlet.runsettings
+
+      - name: 🧪 Publish test results to Checks
+        if: ${{ always() }}
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: |
+            TestResults/**/*.trx
+            TestResults/**/*.xml
+          check_name: "Tests"
+
+      - name: 📈 Generate coverage report (summary + HTML)
+        if: ${{ always() }}
+        uses: danielpalme/ReportGenerator-GitHub-Action@v5
+        with:
+          reports: 'TestResults/**/coverage.cobertura.xml'
+          targetdir: ${{ runner.temp }}/coveragereport
+          reporttypes: 'Html;MarkdownSummaryGithub;Badges'
+          assemblyfilters: '-*.Test*'
+
+      - name: 🧾 Add coverage summary to job
+        if: ${{ always() }}
+        run: cat '${{ runner.temp }}/coveragereport/SummaryGithub.md' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: 💾 Upload coverage HTML
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: Coverage report
+          path: ${{ runner.temp }}/coveragereport

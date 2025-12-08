@@ -1,0 +1,45 @@
+name: Prod Nightly Deploy
+on:
+  schedule:
+    - cron: "5 0 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nightly-rollup-${{ github.workflow }}-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      has_changes: ${{ steps.rollup.outputs.has_changes }}
+      base_tag:    ${{ steps.rollup.outputs.base_tag || '' }}
+      ahead:       ${{ steps.rollup.outputs.ahead || '0' }}
+    steps:
+      - uses: actions/checkout@v4 
+        with: 
+          ref: main
+          fetch-depth: 0
+      - id: rollup
+        uses: hermitos/tag-deploy-actions/tag-rollup@v2
+        with:
+          tag: latest-deploy-prod
+      - name: Debug outputs
+        run: |
+          echo "has_changes=${{ steps.rollup.outputs.has_changes }}"
+          echo "base_tag=${{ steps.rollup.outputs.base_tag }}"
+          echo "ahead=${{ steps.rollup.outputs.ahead }}"
+  call-deploy-webapi:
+    needs: check
+    if: ${{ fromJSON(needs.check.outputs.has_changes) }}
+    uses: folkehelseinstituttet/Fhi.Helsedata.Portefolje/.github/workflows/Prod.WebApi.Portefolje.Fhi.Publish.yml@main
+    secrets: inherit 
+  call-deploy-app:
+    needs: check
+    if: ${{ fromJSON(needs.check.outputs.has_changes) }}
+    uses: folkehelseinstituttet/Fhi.Helsedata.Portefolje/.github/workflows/Prod.App.Portefolje.Fhi.Publish.yml@main
+    secrets: inherit
+    
