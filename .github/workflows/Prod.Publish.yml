@@ -47,6 +47,6 @@ jobs:
         run: echo "Simulating publish to Azure"
 
       - name: Update last-deploy tag
-        uses: hermitos/tag-deploy-actions/tag-push@v2.1
+        uses: hermitos/tag-deploy-actions/tag-push@v2.2
         with:
           tag: last-deploy-prod
