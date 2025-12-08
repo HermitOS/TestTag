@@ -35,7 +35,7 @@ jobs:
         run: dotnet build ${{ env.SOLUTION_PATH }} -c ${{ env.CONFIGURATION }} --no-restore
 
       - name: 🧪 Test
-        run: dotnet test ${{ env.SOLUTION_PATH }} -c ${{ env.CONFIGURATION }} --no-build --logger "trx;LogFileName=test.trx" --results-directory TestResults --settings Coverlet.runsettings
+        run: dotnet test ${{ env.SOLUTION_PATH }} -c ${{ env.CONFIGURATION }} --no-build --logger "trx;LogFileName=test.trx" --results-directory TestResults --settings Coverlet.runsettings --collect:"XPlat Code Coverage"
 
       - name: 🧪 Publish test results to Checks
         if: ${{ always() }}
