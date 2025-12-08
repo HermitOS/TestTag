@@ -49,4 +49,21 @@ public class CalculatorTests
         // Assert
         Assert.That(result, Is.EqualTo(0));
     }
+
+    /// <summary>
+    /// Additional tests Divide method
+    /// </summary>
+    [Test]
+    public void Divide_ByNonZeroNumber_ReturnsCorrectQuotient()
+    {
+        // Arrange
+        int a = 10;
+        int b = 2;
+
+        // Act
+        double result = _calculator.Divide(a, b);
+
+        // Assert
+        Assert.That(result, Is.EqualTo(5.0));
+    }
 }
