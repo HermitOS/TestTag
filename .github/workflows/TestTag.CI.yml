@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  SOLUTION_PATH: ./TestTag.sln
+  SOLUTION_PATH: ./TestTag.slnx
   DOTNET_VERSION: '9.0.x'
   CONFIGURATION: Debug
 

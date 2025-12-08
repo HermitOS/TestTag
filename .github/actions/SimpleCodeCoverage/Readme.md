@@ -16,6 +16,10 @@ Perfect for .NET projects using NUnit, xUnit, or MSTest. Works seamlessly on Ubu
 
 ⚡ **Zero Maintenance** - No external services to manage, no API keys to rotate, no vendor lock-in. It just works.
 
+![Coverage Report Example](images/coverage-report-example.png)
+
+*Example coverage report showing class and method-level metrics with color-coded indicators*
+
 ## Features
 
 - 📊 **Comprehensive Coverage Metrics**: Line coverage, branch coverage, complexity, and hit counts
@@ -167,25 +171,31 @@ jobs:
 
 ## Example Output
 
-The action generates a report in your workflow summary with three sections:
+The action generates a comprehensive report in your GitHub Actions workflow summary with three detailed sections:
 
 ### Test Coverage Summary
+
 | Metric | Coverage |
 |--------|----------|
-| **Line Coverage** | **85.50%** |
-| **Branch Coverage** | **75.25%** |
+| **Line Coverage** | **46.66%** |
+| **Branch Coverage** | **50.00%** |
 
 ### Coverage by Class
+
 | Class | File | Lines | Branches | Complexity | Hits | Line Cov | Branch Cov |
 |-------|------|-------|----------|------------|------|----------|------------|
-| 🟢 Calculator | Calculator.cs | 15 | 4 | 🟢 5 | 120 | 🟢 95.00% | 🟢 85.00% |
-| 🟡 StringHelper | StringHelper.cs | 22 | 8 | 🟡 12 | 80 | 🟡 65.00% | 🟡 55.00% |
+| 🟡 TestTag.ConsoleApp.Calculator | TestTag.ConsoleApp/TestTag.ConsoleApp/Calculator.cs | 30 | 2 | 🟢 5 | 26 | 🟡 46.66% | 🟢 50.00% |
 
 ### Coverage by Method
+
 | Method | Lines | Branches | Complexity | Hits | Line Cov | Branch Cov |
 |--------|-------|----------|------------|------|----------|------------|
-| 🟢 Calculator.Add | 3 | 0 | 🟢 1 | 15 | 🟢 100.00% | 🟢 100.00% |
-| 🟡 StringHelper.Parse | 8 | 4 | 🟡 6 | 25 | 🟡 75.00% | 🟡 60.00% |
+| 🟢 TestTag.ConsoleApp.Calculator.Add | 3 | 0 | 🟢 1 | 9 | 🟢 100.00% | 🟢 100.00% |
+| 🔴 TestTag.ConsoleApp.Calculator.Subtract | 3 | 0 | 🟢 1 | 0 | 🔴 0.00% | 🟢 100.00% |
+| 🔴 TestTag.ConsoleApp.Calculator.Multiply | 3 | 0 | 🟢 1 | 0 | 🔴 0.00% | 🟢 100.00% |
+| 🟡 TestTag.ConsoleApp.Calculator.Divide | 6 | 1 | 🟢 2 | 4 | 🟡 66.66% | 🟢 50.00% |
+
+*Color indicators show test quality at a glance: 🟢 Green (excellent), 🟡 Yellow (needs attention), 🔴 Red (requires testing)*
 
 ## Using with Different Test Frameworks
 
