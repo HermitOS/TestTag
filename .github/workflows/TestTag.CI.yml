@@ -44,22 +44,41 @@ jobs:
           files: TestResults/**/*.trx
           check_name: "Tests"
 
-      - name: 📈 Generate coverage report (summary + HTML)
+      - name: 📈 Generate coverage summary
         if: ${{ always() }}
-        uses: danielpalme/ReportGenerator-GitHub-Action@v5
-        with:
-          reports: 'TestResults/**/coverage.cobertura.xml'
-          targetdir: ${{ runner.temp }}/coveragereport
-          reporttypes: 'Html;MarkdownSummaryGithub;Badges'
-          assemblyfilters: '-*.Test*'
+        run: |
+          $coverageFile = Get-ChildItem -Path TestResults -Filter coverage.cobertura.xml -Recurse | Select-Object -First 1
+          if ($coverageFile) {
+            [xml]$coverage = Get-Content $coverageFile.FullName
+            $lineRate = [math]::Round([decimal]$coverage.coverage.'line-rate' * 100, 2)
+            $branchRate = [math]::Round([decimal]$coverage.coverage.'branch-rate' * 100, 2)
+            
+            "## Test Coverage Summary" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
+            "" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
+            "| Metric | Coverage |" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
+            "|--------|----------|" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
+            "| **Line Coverage** | **${lineRate}%** |" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
+            "| **Branch Coverage** | **${branchRate}%** |" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
+            "" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
+            
+            "### Coverage by Class" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
+            "" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
+            "| Class | Line Coverage | Branch Coverage |" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
+            "|-------|---------------|-----------------|" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
+            
+            foreach ($package in $coverage.coverage.packages.package) {
+              foreach ($class in $package.classes.class) {
+                $className = $class.name
+                $classLineRate = [math]::Round([decimal]$class.'line-rate' * 100, 2)
+                $classBranchRate = [math]::Round([decimal]$class.'branch-rate' * 100, 2)
+                "| $className | ${classLineRate}% | ${classBranchRate}% |" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
+              }
+            }
+          }
 
-      - name: 🧾 Add coverage summary to job
-        if: ${{ always() }}
-        run: cat '${{ runner.temp }}/coveragereport/SummaryGithub.md' >> "$GITHUB_STEP_SUMMARY"
-
-      - name: 💾 Upload coverage HTML
+      - name: 💾 Upload coverage report
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
-          name: Coverage report
-          path: ${{ runner.temp }}/coveragereport
+          name: coverage-report
+          path: TestResults/**/coverage.cobertura.xml
