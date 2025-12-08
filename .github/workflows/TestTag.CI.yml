@@ -41,9 +41,7 @@ jobs:
         if: ${{ always() }}
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
-          files: |
-            TestResults/**/*.trx
-            TestResults/**/*.xml
+          files: TestResults/**/*.trx
           check_name: "Tests"
 
       - name: 📈 Generate coverage report (summary + HTML)
