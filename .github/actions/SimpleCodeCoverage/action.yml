@@ -1,0 +1,35 @@
+name: 'Simple Code Coverage Report'
+description: 'Generate a color-coded coverage report from Cobertura XML files'
+inputs:
+  coverage-file-pattern:
+    description: 'Pattern to find coverage XML files'
+    required: false
+    default: 'TestResults/**/coverage.cobertura.xml'
+  cov-green-threshold:
+    description: 'Coverage percentage threshold for green status'
+    required: false
+    default: '50'
+  cov-yellow-threshold:
+    description: 'Coverage percentage threshold for yellow status'
+    required: false
+    default: '20'
+  complexity-green-threshold:
+    description: 'Complexity threshold for green status'
+    required: false
+    default: '10'
+  complexity-yellow-threshold:
+    description: 'Complexity threshold for yellow status'
+    required: false
+    default: '20'
+runs:
+  using: 'composite'
+  steps:
+    - name: Generate coverage summary
+      shell: bash
+      run: ${{ github.action_path }}/generate-coverage.sh
+      env:
+        COVERAGE_FILE_PATTERN: ${{ inputs.coverage-file-pattern }}
+        COV_GREEN: ${{ inputs.cov-green-threshold }}
+        COV_YELLOW: ${{ inputs.cov-yellow-threshold }}
+        COMPLEX_GREEN: ${{ inputs.complexity-green-threshold }}
+        COMPLEX_YELLOW: ${{ inputs.complexity-yellow-threshold }}
