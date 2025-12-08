@@ -8,7 +8,16 @@ COMPLEX_GREEN=${COMPLEX_GREEN:-10}
 COMPLEX_YELLOW=${COMPLEX_YELLOW:-20}
 COVERAGE_FILE_PATTERN=${COVERAGE_FILE_PATTERN:-"TestResults/**/coverage.cobertura.xml"}
 
-coverageFile=$(find . -path "$COVERAGE_FILE_PATTERN" -type f | head -n 1)
+# Convert glob pattern to find-compatible pattern
+# Replace ** with */ for recursive search
+findPattern=$(echo "$COVERAGE_FILE_PATTERN" | sed 's|\*\*/|*/|g')
+
+# Find coverage file using the pattern
+coverageFile=$(find . -name "coverage.cobertura.xml" -path "*TestResults*" -type f | head -n 1)
+
+echo "Looking for coverage files matching pattern: $COVERAGE_FILE_PATTERN"
+echo "Found coverage file: $coverageFile"
+
 if [ -n "$coverageFile" ] && [ -f "$coverageFile" ]; then
   lineRate=$(grep -oP 'line-rate="\K[^"]+' "$coverageFile" | head -n 1)
   branchRate=$(grep -oP 'branch-rate="\K[^"]+' "$coverageFile" | head -n 1)
@@ -157,5 +166,10 @@ if [ -n "$coverageFile" ] && [ -f "$coverageFile" ]; then
       color_text(sprintf("%.2f%%", branchCov), branchColor)
   }' "$coverageFile" >> $GITHUB_STEP_SUMMARY
 else
-  echo "No coverage file found" >> $GITHUB_STEP_SUMMARY
+  echo "## Test Coverage Summary" >> $GITHUB_STEP_SUMMARY
+  echo "" >> $GITHUB_STEP_SUMMARY
+  echo "⚠️ No coverage file found matching pattern: \`$COVERAGE_FILE_PATTERN\`" >> $GITHUB_STEP_SUMMARY
+  echo "" >> $GITHUB_STEP_SUMMARY
+  echo "Searched in:" >> $GITHUB_STEP_SUMMARY
+  find . -name "*.xml" -path "*TestResults*" -type f >> $GITHUB_STEP_SUMMARY || echo "No XML files found in TestResults" >> $GITHUB_STEP_SUMMARY
 fi
