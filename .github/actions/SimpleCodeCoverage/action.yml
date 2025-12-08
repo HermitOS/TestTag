@@ -1,5 +1,9 @@
 name: 'Simple Code Coverage Report'
-description: 'Generate a color-coded coverage report from Cobertura XML files'
+description: 'Generate a color-coded coverage report from Cobertura XML files with class and method level details'
+author: 'Terje Sandstrom'
+branding:
+  icon: 'check-circle'
+  color: 'green'
 inputs:
   coverage-file-pattern:
     description: 'Pattern to find coverage XML files'

@@ -2,5 +2,5 @@
 
 This repo checks the tag actions for checking and  pushing deploy tags.
 
-It also checks the CI build test coverage, which currently don't work as it should.
+It also checks the CI build test coverage.
 
