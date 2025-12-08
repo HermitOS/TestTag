@@ -66,17 +66,53 @@ jobs:
             
             echo "### Coverage by Class" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "| Class | Line Coverage | Branch Coverage |" >> $GITHUB_STEP_SUMMARY
-            echo "|-------|---------------|-----------------|" >> $GITHUB_STEP_SUMMARY
+            echo "| Class | File | Lines | Branches | Complexity | Line Cov | Branch Cov |" >> $GITHUB_STEP_SUMMARY
+            echo "|-------|------|-------|----------|------------|----------|------------|" >> $GITHUB_STEP_SUMMARY
             
-            grep '<class' "$coverageFile" | while IFS= read -r line; do
-              className=$(echo "$line" | grep -oP 'name="\K[^"]+' || echo "Unknown")
-              classLine=$(echo "$line" | grep -oP 'line-rate="\K[^"]+' || echo "0")
-              classBranch=$(echo "$line" | grep -oP 'branch-rate="\K[^"]+' || echo "0")
-              classLinePercent=$(awk "BEGIN {printf \"%.2f\", $classLine * 100}")
-              classBranchPercent=$(awk "BEGIN {printf \"%.2f\", $classBranch * 100}")
-              echo "| $className | ${classLinePercent}% | ${classBranchPercent}% |" >> $GITHUB_STEP_SUMMARY
-            done
+            awk '/<class / {
+              match($0, /name="([^"]+)"/, name)
+              match($0, /filename="([^"]+)"/, file)
+              match($0, /line-rate="([^"]+)"/, lr)
+              match($0, /branch-rate="([^"]+)"/, br)
+              match($0, /complexity="([^"]+)"/, comp)
+              lines=0
+              branches=0
+              getline
+              while ($0 !~ /<\/class>/) {
+                if ($0 ~ /<line /) {
+                  lines++
+                  if ($0 ~ /branch="True"/) branches++
+                }
+                getline
+              }
+              filename = file[1]
+              sub(/.*TestTag\//, "", filename)
+              printf "| %s | %s | %d | %d | %s | %.2f%% | %.2f%% |\n", name[1], filename, lines, branches, comp[1], lr[1]*100, br[1]*100
+            }' "$coverageFile" >> $GITHUB_STEP_SUMMARY
+            
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Coverage by Method" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "| Method | Lines | Branches | Complexity | Line Cov | Branch Cov |" >> $GITHUB_STEP_SUMMARY
+            echo "|--------|-------|----------|------------|----------|------------|" >> $GITHUB_STEP_SUMMARY
+            
+            awk '/<method / {
+              match($0, /name="([^"]+)"/, name)
+              match($0, /line-rate="([^"]+)"/, lr)
+              match($0, /branch-rate="([^"]+)"/, br)
+              match($0, /complexity="([^"]+)"/, comp)
+              lines=0
+              branches=0
+              getline
+              while ($0 !~ /<\/method>/) {
+                if ($0 ~ /<line /) {
+                  lines++
+                  if ($0 ~ /branch="True"/) branches++
+                }
+                getline
+              }
+              printf "| %s | %d | %d | %s | %.2f%% | %.2f%% |\n", name[1], lines, branches, comp[1], lr[1]*100, br[1]*100
+            }' "$coverageFile" >> $GITHUB_STEP_SUMMARY
           else
             echo "No coverage file found" >> $GITHUB_STEP_SUMMARY
           fi
