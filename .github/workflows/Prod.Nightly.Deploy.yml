@@ -24,7 +24,7 @@ jobs:
           ref: main
           fetch-depth: 0
       - id: rollup
-        uses: hermitos/tag-deploy-actions/tag-rollup@v2
+        uses: hermitos/tag-deploy-actions/tag-rollup@v2.1
         with:
           tag: latest-deploy-prod
       - name: Debug outputs
