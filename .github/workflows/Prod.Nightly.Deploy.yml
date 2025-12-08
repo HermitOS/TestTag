@@ -35,11 +35,7 @@ jobs:
   call-deploy-webapi:
     needs: check
     if: ${{ fromJSON(needs.check.outputs.has_changes) }}
-    uses: folkehelseinstituttet/Fhi.Helsedata.Portefolje/.github/workflows/Prod.WebApi.Portefolje.Fhi.Publish.yml@main
+    uses: HermitOS/TestTag/.github/workflows/Prod.Publish.yml@main
     secrets: inherit 
-  call-deploy-app:
-    needs: check
-    if: ${{ fromJSON(needs.check.outputs.has_changes) }}
-    uses: folkehelseinstituttet/Fhi.Helsedata.Portefolje/.github/workflows/Prod.App.Portefolje.Fhi.Publish.yml@main
-    secrets: inherit
+
     
