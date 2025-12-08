@@ -121,7 +121,7 @@ jobs:
             -c ${{ env.CONFIGURATION }} \
             --no-build \
             --logger "trx;LogFileName=test.trx" \
-            --results-directory TestResults \
+            --results-directory ${{ github.workspace }}/TestResults \
             --settings Coverlet.runsettings \
             --collect:"XPlat Code Coverage"
 
@@ -258,7 +258,7 @@ If you see "⚠️ No coverage file found", check:
 
 1. **Test command includes coverage collection**:
    ```yaml
-   --settings Coverlet.runsettings --collect:"XPlat Code Coverage"
+   --results-directory ${{ github.workspace }}/TestResults --settings Coverlet.runsettings --collect:"XPlat Code Coverage"
    ```
 
 2. **Coverlet.runsettings has Cobertura format**:
@@ -267,7 +267,7 @@ If you see "⚠️ No coverage file found", check:
    ```
 
 3. **TestResults directory exists**:
-   The `--results-directory TestResults` flag should match your pattern.
+   The `--results-directory ${{ github.workspace }}/TestResults` flag should match your pattern.
 
 4. **Pattern matches file location**:
    Coverage files are typically in `TestResults/{guid}/coverage.cobertura.xml`
@@ -295,7 +295,7 @@ If you have multiple test projects, the coverage files will be collected from al
 
 ```yaml
 - name: Test with Coverage
-  run: dotnet test ${{ env.SOLUTION_PATH }} --settings Coverlet.runsettings --collect:"XPlat Code Coverage"
+  run: dotnet test ${{ env.SOLUTION_PATH }} --results-directory ${{ github.workspace }}/TestResults --settings Coverlet.runsettings --collect:"XPlat Code Coverage"
 ```
 
 The action will find all `coverage.cobertura.xml` files and report on the first one found. To combine multiple coverage files, use a tool like `dotnet-coverage` to merge them first.
