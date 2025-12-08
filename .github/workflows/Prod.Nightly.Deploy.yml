@@ -26,7 +26,7 @@ jobs:
       - id: rollup
         uses: hermitos/tag-deploy-actions/tag-rollup@v2.2
         with:
-          tag: latest-deploy-prod
+          tag: last-deploy-prod
       - name: Debug outputs
         run: |
           echo "has_changes=${{ steps.rollup.outputs.has_changes }}"
