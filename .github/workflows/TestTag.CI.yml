@@ -48,8 +48,9 @@ jobs:
         if: ${{ always() }}
         shell: bash
         run: |
+          set -e
           coverageFile=$(find TestResults -name 'coverage.cobertura.xml' -type f | head -n 1)
-          if [ -f "$coverageFile" ]; then
+          if [ -n "$coverageFile" ] && [ -f "$coverageFile" ]; then
             lineRate=$(grep -oP 'line-rate="\K[^"]+' "$coverageFile" | head -n 1)
             branchRate=$(grep -oP 'branch-rate="\K[^"]+' "$coverageFile" | head -n 1)
             linePercent=$(awk "BEGIN {printf \"%.2f\", $lineRate * 100}")
@@ -69,13 +70,15 @@ jobs:
             echo "|-------|---------------|-----------------|" >> $GITHUB_STEP_SUMMARY
             
             grep '<class' "$coverageFile" | while IFS= read -r line; do
-              className=$(echo "$line" | grep -oP 'name="\K[^"]+')
-              classLine=$(echo "$line" | grep -oP 'line-rate="\K[^"]+')
-              classBranch=$(echo "$line" | grep -oP 'branch-rate="\K[^"]+')
+              className=$(echo "$line" | grep -oP 'name="\K[^"]+' || echo "Unknown")
+              classLine=$(echo "$line" | grep -oP 'line-rate="\K[^"]+' || echo "0")
+              classBranch=$(echo "$line" | grep -oP 'branch-rate="\K[^"]+' || echo "0")
               classLinePercent=$(awk "BEGIN {printf \"%.2f\", $classLine * 100}")
               classBranchPercent=$(awk "BEGIN {printf \"%.2f\", $classBranch * 100}")
               echo "| $className | ${classLinePercent}% | ${classBranchPercent}% |" >> $GITHUB_STEP_SUMMARY
             done
+          else
+            echo "No coverage file found" >> $GITHUB_STEP_SUMMARY
           fi
 
       - name: 💾 Upload coverage report
