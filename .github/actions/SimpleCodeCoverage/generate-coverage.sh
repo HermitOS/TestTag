@@ -36,7 +36,7 @@ if [ -n "$coverageFile" ] && [ -f "$coverageFile" ]; then
   
   echo "### Coverage by Class" >> $GITHUB_STEP_SUMMARY
   echo "" >> $GITHUB_STEP_SUMMARY
-  echo "| Class | File | Lines | Branches | Complexity | Hits | Line Cov | Branch Cov | CRAP |" >> $GITHUB_STEP_SUMMARY
+  echo "| Class | File | Lines | Branches | Complexity | Hits | Line Cov | Branch Cov | [CRAP](https://testing.googleblog.com/2011/02/this-code-is-crap.html) |" >> $GITHUB_STEP_SUMMARY
   echo "|-------|------|-------|----------|------------|------|----------|------------|------|" >> $GITHUB_STEP_SUMMARY
   
   awk -v cov_green="$COV_GREEN" -v cov_yellow="$COV_YELLOW" -v comp_green="$COMPLEX_GREEN" -v comp_yellow="$COMPLEX_YELLOW" -v crap_green="$CRAP_GREEN_MAX" -v crap_yellow="$CRAP_YELLOW_MAX" '
