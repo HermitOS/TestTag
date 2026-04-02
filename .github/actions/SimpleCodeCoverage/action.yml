@@ -26,13 +26,13 @@ inputs:
     required: false
     default: '20'
   crap-green-max:
-    description: 'CRAP score at or below this value is green'
+    description: 'CRAP score at or below this value is green (default 5.0)'
     required: false
-    default: '20'
+    default: '5'
   crap-yellow-max:
-    description: 'CRAP score above green max and at or below this value is yellow'
+    description: 'CRAP score above green max and at or below this value is yellow (default 12)'
     required: false
-    default: '30'
+    default: '12'
 runs:
   using: 'composite'
   steps:
