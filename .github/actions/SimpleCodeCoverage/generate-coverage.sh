@@ -61,12 +61,9 @@ if [ -n "$coverageFile" ] && [ -f "$coverageFile" ]; then
     if (c1 == "yellow" || c2 == "yellow" || c3 == "yellow") return "yellow"
     return "green"
   }
-  function crap_score_0_100(comp, lineRate) {
-    raw = (comp+0) * (1-lineRate) * (1-lineRate)
-    n = int(raw * 100 + 0.5)
-    if (n < 0) n = 0
-    if (n > 100) n = 100
-    return n
+  # CRAP = complexity * (1 - line_coverage)^2  (line_coverage is Cobertura line-rate 0..1)
+  function crap_score(comp, lineRate) {
+    return (comp+0) * (1-lineRate) * (1-lineRate)
   }
   function get_crap_color(score) {
     if (score <= crap_green) return "green"
@@ -104,15 +101,15 @@ if [ -n "$coverageFile" ] && [ -f "$coverageFile" ]; then
     complexColor = get_complex_color(complexity)
     nameColor = worst_color(lineColor, branchColor, complexColor)
     
-    crapInt = crap_score_0_100(complexity, lr[1])
-    crapColor = get_crap_color(crapInt)
+    crapVal = crap_score(complexity, lr[1])
+    crapColor = get_crap_color(crapVal)
     
     printf "| %s | %s | %d | %d | %s | %d | %s | %s | %s |\n", 
       color_text(name[1], nameColor), filename, lines, branches, 
       color_text(complexity, complexColor), totalHits,
       color_text(sprintf("%.2f%%", lineCov), lineColor),
       color_text(sprintf("%.2f%%", branchCov), branchColor),
-      color_text(sprintf("%d", crapInt), crapColor)
+      color_text(sprintf("%.2f", crapVal), crapColor)
   }' "$coverageFile" >> $GITHUB_STEP_SUMMARY
   
   echo "" >> $GITHUB_STEP_SUMMARY
@@ -143,12 +140,9 @@ if [ -n "$coverageFile" ] && [ -f "$coverageFile" ]; then
     if (c1 == "yellow" || c2 == "yellow" || c3 == "yellow") return "yellow"
     return "green"
   }
-  function crap_score_0_100(comp, lineRate) {
-    raw = (comp+0) * (1-lineRate) * (1-lineRate)
-    n = int(raw * 100 + 0.5)
-    if (n < 0) n = 0
-    if (n > 100) n = 100
-    return n
+  # CRAP = complexity * (1 - line_coverage)^2  (line_coverage is Cobertura line-rate 0..1)
+  function crap_score(comp, lineRate) {
+    return (comp+0) * (1-lineRate) * (1-lineRate)
   }
   function get_crap_color(score) {
     if (score <= crap_green) return "green"
@@ -189,15 +183,15 @@ if [ -n "$coverageFile" ] && [ -f "$coverageFile" ]; then
     
     methodFullName = currentClass "." name[1]
     
-    crapInt = crap_score_0_100(complexity, lr[1])
-    crapColor = get_crap_color(crapInt)
+    crapVal = crap_score(complexity, lr[1])
+    crapColor = get_crap_color(crapVal)
     
     printf "| %s | %d | %d | %s | %d | %s | %s | %s |\n", 
       color_text(methodFullName, nameColor), lines, branches,
       color_text(complexity, complexColor), totalHits,
       color_text(sprintf("%.2f%%", lineCov), lineColor),
       color_text(sprintf("%.2f%%", branchCov), branchColor),
-      color_text(sprintf("%d", crapInt), crapColor)
+      color_text(sprintf("%.2f", crapVal), crapColor)
   }' "$coverageFile" >> $GITHUB_STEP_SUMMARY
 else
   echo "## Test Coverage Summary" >> $GITHUB_STEP_SUMMARY
