@@ -247,9 +247,9 @@ The action generates a comprehensive report in your GitHub Actions workflow summ
 | Method | Lines | Branches | Complexity | Hits | Line Cov | Branch Cov | CRAP |
 |--------|-------|----------|------------|------|----------|------------|------|
 | 🟢 TestTag.ConsoleApp.Calculator.Add | 3 | 0 | 🟢 1 | 9 | 🟢 100.00% | 🟢 100.00% | 🟢 0.00 |
-| 🔴 TestTag.ConsoleApp.Calculator.Subtract | 3 | 0 | 🟢 1 | 0 | 🔴 0.00% | 🟢 100.00% | 🔴 1.00 |
-| 🔴 TestTag.ConsoleApp.Calculator.Multiply | 3 | 0 | 🟢 1 | 0 | 🔴 0.00% | 🟢 100.00% | 🔴 1.00 |
-| 🟡 TestTag.ConsoleApp.Calculator.Divide | 6 | 1 | 🟢 2 | 4 | 🟡 66.66% | 🟢 50.00% | 🟡 0.22 |
+| 🔴 TestTag.ConsoleApp.Calculator.Subtract | 3 | 0 | 🟢 1 | 0 | 🔴 0.00% | 🟢 100.00% | 🟢 1.00 |
+| 🔴 TestTag.ConsoleApp.Calculator.Multiply | 3 | 0 | 🟢 1 | 0 | 🔴 0.00% | 🟢 100.00% | 🟢 1.00 |
+| 🟡 TestTag.ConsoleApp.Calculator.Divide | 6 | 1 | 🟢 2 | 4 | 🟡 66.66% | 🟢 50.00% | 🟢 0.22 |
 
 *Color indicators show test quality at a glance: 🟢 Green (excellent), 🟡 Yellow (needs attention), 🔴 Red (requires testing)*
 
