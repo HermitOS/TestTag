@@ -25,6 +25,14 @@ inputs:
     description: 'Complexity threshold for yellow status'
     required: false
     default: '20'
+  crap-green-max:
+    description: 'CRAP score at or below this value is green (default 5.0)'
+    required: false
+    default: '5'
+  crap-yellow-max:
+    description: 'CRAP score above green max and at or below this value is yellow (default 12)'
+    required: false
+    default: '12'
 runs:
   using: 'composite'
   steps:
@@ -37,3 +45,5 @@ runs:
         COV_YELLOW: ${{ inputs.cov-yellow-threshold }}
         COMPLEX_GREEN: ${{ inputs.complexity-green-threshold }}
         COMPLEX_YELLOW: ${{ inputs.complexity-yellow-threshold }}
+        CRAP_GREEN_MAX: ${{ inputs.crap-green-max }}
+        CRAP_YELLOW_MAX: ${{ inputs.crap-yellow-max }}
