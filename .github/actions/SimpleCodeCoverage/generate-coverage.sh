@@ -6,8 +6,11 @@ COV_GREEN=${COV_GREEN:-50}
 COV_YELLOW=${COV_YELLOW:-20}
 COMPLEX_GREEN=${COMPLEX_GREEN:-10}
 COMPLEX_YELLOW=${COMPLEX_YELLOW:-20}
-CRAP_GREEN_MAX=${CRAP_GREEN_MAX:-5}
-CRAP_YELLOW_MAX=${CRAP_YELLOW_MAX:-12}
+# CRAP band limits: class vs method (see action.yml inputs)
+CRAP_CLASS_GREEN_MAX=${CRAP_CLASS_GREEN_MAX:-30}
+CRAP_CLASS_YELLOW_MAX=${CRAP_CLASS_YELLOW_MAX:-60}
+CRAP_METHOD_GREEN_MAX=${CRAP_METHOD_GREEN_MAX:-5}
+CRAP_METHOD_YELLOW_MAX=${CRAP_METHOD_YELLOW_MAX:-12}
 COVERAGE_FILE_PATTERN=${COVERAGE_FILE_PATTERN:-"TestResults/**/coverage.cobertura.xml"}
 
 # Convert glob pattern to find-compatible pattern
@@ -39,7 +42,7 @@ if [ -n "$coverageFile" ] && [ -f "$coverageFile" ]; then
   echo "| Class | File | Lines | Branches | Complexity | Hits | Line Cov | Branch Cov | [CRAP](https://testing.googleblog.com/2011/02/this-code-is-crap.html) |" >> $GITHUB_STEP_SUMMARY
   echo "|-------|------|-------|----------|------------|------|----------|------------|------|" >> $GITHUB_STEP_SUMMARY
   
-  awk -v cov_green="$COV_GREEN" -v cov_yellow="$COV_YELLOW" -v comp_green="$COMPLEX_GREEN" -v comp_yellow="$COMPLEX_YELLOW" -v crap_green="$CRAP_GREEN_MAX" -v crap_yellow="$CRAP_YELLOW_MAX" '
+  awk -v cov_green="$COV_GREEN" -v cov_yellow="$COV_YELLOW" -v comp_green="$COMPLEX_GREEN" -v comp_yellow="$COMPLEX_YELLOW" -v crap_green="$CRAP_CLASS_GREEN_MAX" -v crap_yellow="$CRAP_CLASS_YELLOW_MAX" '
   function color_text(text, color) {
     if (color == "red") return "🔴 " text
     if (color == "yellow") return "🟡 " text
@@ -118,7 +121,7 @@ if [ -n "$coverageFile" ] && [ -f "$coverageFile" ]; then
   echo "| Method | Lines | Branches | Complexity | Hits | Line Cov | Branch Cov | CRAP |" >> $GITHUB_STEP_SUMMARY
   echo "|--------|-------|----------|------------|------|----------|------------|------|" >> $GITHUB_STEP_SUMMARY
   
-  awk -v cov_green="$COV_GREEN" -v cov_yellow="$COV_YELLOW" -v comp_green="$COMPLEX_GREEN" -v comp_yellow="$COMPLEX_YELLOW" -v crap_green="$CRAP_GREEN_MAX" -v crap_yellow="$CRAP_YELLOW_MAX" '
+  awk -v cov_green="$COV_GREEN" -v cov_yellow="$COV_YELLOW" -v comp_green="$COMPLEX_GREEN" -v comp_yellow="$COMPLEX_YELLOW" -v crap_green="$CRAP_METHOD_GREEN_MAX" -v crap_yellow="$CRAP_METHOD_YELLOW_MAX" '
   function color_text(text, color) {
     if (color == "red") return "🔴 " text
     if (color == "yellow") return "🟡 " text
